@@ -1,8 +1,9 @@
 <?php
-
 require_once "vendor/autoload.php";
 
-use PHP2\classes\logic\Task;
+use PHP2\logic\Task;
+
+
 
 $task = new Task('new', 1);
 $result = $task->getStatusesMap();

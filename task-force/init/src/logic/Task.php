@@ -1,6 +1,6 @@
 <?php
 
-namespace PHP2\classes\logic;
+namespace PHP2\logic;
 
 class Task
 {
