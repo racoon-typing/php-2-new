@@ -1,0 +1,15 @@
+{
+    "name": "sergej/php-2-new",
+    "autoload": {
+        "psr-4": {
+            "PHP2\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Daniil",
+            "email": "eo18622@yandex.ru"
+        }
+    ],
+    "require": {}
+}
