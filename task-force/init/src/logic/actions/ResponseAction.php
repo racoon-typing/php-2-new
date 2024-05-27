@@ -2,21 +2,19 @@
 
 namespace Taskforce\logic\actions;
 
-class ResponseAction extends BaseAction {
-    const ACTION_RESPONSE = 'act_response';
-
-    public function getName()
+class ResponseAction extends AbstractAction {
+    public static function getLabel()
     {
         return 'Откликнуться';
     }
 
-    public function getInternalName()
+    public static function getInternalName()
     {
-        return self::ACTION_RESPONSE;
+        return 'act_response';
     }
 
-    public function check($userId, $performerId)
+    public static function checkRights($userId, $performerId, $clientId)
     {
-        return $userId === $performerId;
+        return $userId == $performerId;
     }
 }

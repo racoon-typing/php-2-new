@@ -2,7 +2,8 @@
 
 namespace Taskforce\logic;
 
-use Taskforce\logic\actions\BaseAction;
+use Taskforce\logic\actions\AbstractAction;
+use Taskforce\logic\actions\CompleteAction;
 
 class Task
 {
@@ -12,11 +13,6 @@ class Task
     const STATUS_COMPLETE = 'complete';
     const STATUS_EXPIRED = 'expired';
 
-    // const ACTION_RESPONSE = 'act_response';
-    // const ACTION_CANCEL = 'act_cancel';
-    // const ACTION_DENY = 'act_deny';
-    // const ACTION_COMPLETE = 'act_complete';
-
     const ROLE_PERFORMER = 'performer';
     const ROLE_CLIENT = 'customer';
 
@@ -25,11 +21,6 @@ class Task
 
     private string $status;
 
-    protected BaseAction $cancelAction;
-    protected BaseAction $completeAction;
-    protected BaseAction $denyAction;
-    protected BaseAction $responseAction;
-
     /**
      * Task constructor
      * @param string $status
@@ -37,17 +28,17 @@ class Task
      * @param BaseAction $cancelAction
      * @param ?int|null $performerId
      */
-    public function __construct(string $status, int $clientId, BaseAction $cancelAction, BaseAction $completeAction, BaseAction $denyAction, BaseAction $responseAction, ?int $performerId = null)
+    public function __construct(string $status, int $clientId, ?int $performerId = null)
     {
         $this->setStatus($status);
 
-        $this->cancelAction = $cancelAction;
-        $this->completeAction = $completeAction;
-        $this->denyAction = $denyAction;
-        $this->responseAction = $responseAction;
-
         $this->clientId = $clientId;
         $this->performerId = $performerId;
+    }
+
+
+    public function getAvailableAction(string $role, int $id) {
+
     }
 
 
@@ -111,7 +102,7 @@ class Task
     public function getNextStatus(string $action): ?string
     {
         $map = [
-            $this->completeAction->getName() => self::STATUS_COMPLETE,
+            CompleteAction::class => self::STATUS_COMPLETE,
             $this->cancelAction->getName() => self::STATUS_CANCEL,
             $this->denyAction->getName() => self::STATUS_CANCEL,
         ];

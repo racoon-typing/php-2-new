@@ -2,21 +2,19 @@
 
 namespace Taskforce\logic\actions;
 
-class CancelAction extends BaseAction {
-    const ACTION_CANCEL = 'act_cancel';
-
-    public function getName()
+class CancelAction extends AbstractAction {
+    public static function getLabel()
     {
         return 'Отменить';
     }
 
-    public function getInternalName()
+    public static function getInternalName()
     {
-        return self::ACTION_CANCEL;
+        return 'act_cancel';
     }
 
-    public function check($userId, $performerId)
+    public static function checkRights($userId, $performerId, $clientId)
     {
-        return $userId === $performerId;
+        return $userId == $clientId;
     }
 }

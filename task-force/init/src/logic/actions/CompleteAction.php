@@ -2,19 +2,19 @@
 
 namespace Taskforce\logic\actions;
 
-class DenyAction extends AbstractAction {
+class CompleteAction extends AbstractAction {
     public static function getLabel()
     {
-        return 'Отказаться';
+        return 'Выполнено';
     }
 
     public static function getInternalName()
     {
-        return 'act_deny';
+        return 'act_complete';
     }
 
     public static function checkRights($userId, $performerId, $clientId)
     {
-        return $userId == $performerId;
+        return $userId == $clientId;
     }
 }

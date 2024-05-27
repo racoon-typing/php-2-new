@@ -17,10 +17,10 @@ $task = new Task(
     new ResponseAction(),
     null
 );
-$result = $task->getStatusesMap();
+// $result = $task->getStatusesMap();
 // $result = $task->getActionsMap();
 // $result = $task->getNextStatus('act_cancel');
-// $result = $task->statusAllowedActions('new');
+$result = $task->statusAllowedActions(Task::STATUS_NEW);
 
 // assert($task->getNextStatus('act_complete') == Task::STATUS_CANCEL, 'cancel action');
 

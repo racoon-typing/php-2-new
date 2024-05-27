@@ -2,10 +2,11 @@
 
 namespace Taskforce\logic\actions;
 
-abstract class BaseAction {
-    abstract public function getName();
-
-    abstract public function getInternalName();
+abstract class AbstractAction {
     
-    abstract public function check($userId, $performerId);
+    abstract public static function getLabel();
+
+    abstract public static function getInternalName();
+    
+    abstract public static function checkRights($userId, $performerId, $clientId);
 }
