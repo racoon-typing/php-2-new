@@ -2,7 +2,7 @@
     "name": "sergej/php-2-new",
     "autoload": {
         "psr-4": {
-            "PHP2\\": "src/"
+            "Taskforce\\": "src/"
         }
     },
     "authors": [
