@@ -2,6 +2,7 @@
 require_once "vendor/autoload.php";
 ini_set('assert.exception', 1);
 
+use Taskforce\exceptions\StatusException;
 use Taskforce\logic\actions\ResponseAction;
 use Taskforce\logic\Task;
 
@@ -14,9 +15,11 @@ try {
     );
     
     $nextStatus = $task->getNextStatus(new ResponseAction());
-} catch (StatusActionException $e) {
+} catch (\Exception $e) {
     die($e->getMessage());
-}
+} catch (StatusException $e) {
+    die($e->getMessage());
+} 
 
 var_dump('new -> performer,alien', $task->getAvailableActions(Task::ROLE_PERFORMER, 2));
 var_dump('new -> performer,same', $task->getAvailableActions(Task::ROLE_PERFORMER, 1));

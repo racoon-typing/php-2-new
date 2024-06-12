@@ -2,11 +2,13 @@
 
 namespace Taskforce\logic;
 
+use Taskforce\exceptions\StatusException;
 use Taskforce\logic\actions\AbstractAction;
 use Taskforce\logic\actions\CancelAction;
 use Taskforce\logic\actions\CompleteAction;
 use Taskforce\logic\actions\DenyAction;
 use Taskforce\logic\actions\ResponseAction;
+
 
 class Task
 {
@@ -19,10 +21,10 @@ class Task
     const ROLE_PERFORMER = 'performer';
     const ROLE_CLIENT = 'customer';
 
-    private int|null $performerId;
-    private int $clientId;
+    private ?int $performerId;
+    private ?int $clientId;
 
-    private string $status;
+    private ?string $status;
 
     /**
      * Task constructor
@@ -40,7 +42,10 @@ class Task
     }
 
 
-    public function getAvailableActions(string $role, int $id) {
+    public function getAvailableActions(string $role, int $id): array
+    {
+        $this->checkRole($role);
+
         $statusActions = $this->statusAllowedActions($this->status);
         $roleActions = $this->roleAllowedActions($role);
 
@@ -49,8 +54,6 @@ class Task
         $allowedActions = array_filter($allowedActions, function ($action) use ($id) {
             return $action::checkRights($id, $this->performerId, $this->clientId);
         });
-
-        // return array($statusActions, $roleActions);
 
         return array_values($allowedActions);
     }
@@ -120,12 +123,24 @@ class Task
             self::STATUS_EXPIRED
         ];
 
+        if (!in_array($status, $availableStatuses)) {
+            throw new StatusException("Неизвестный статус: $status");
+        }
+
         if (in_array($status, $availableStatuses)) {
             $this->status = $status;
         }
     }
 
-/**
+    public function checkRole(string $role): void {
+        $availableRoles = [self::ROLE_PERFORMER, self::ROLE_CLIENT];
+
+        if (!in_array($role, $availableRoles)) {
+            throw new StatusException("Неизвестная роль: $role");
+        }
+    }
+
+    /**
      * Возвращает список возможных дейтсивй для указанного статуса
      * 
      * @param string $role
