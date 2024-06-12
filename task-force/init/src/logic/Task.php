@@ -3,7 +3,10 @@
 namespace Taskforce\logic;
 
 use Taskforce\logic\actions\AbstractAction;
+use Taskforce\logic\actions\CancelAction;
 use Taskforce\logic\actions\CompleteAction;
+use Taskforce\logic\actions\DenyAction;
+use Taskforce\logic\actions\ResponseAction;
 
 class Task
 {
@@ -37,8 +40,19 @@ class Task
     }
 
 
-    public function getAvailableAction(string $role, int $id) {
+    public function getAvailableActions(string $role, int $id) {
+        $statusActions = $this->statusAllowedActions($this->status);
+        $roleActions = $this->roleAllowedActions($role);
 
+        $allowedActions = array_intersect($statusActions, $roleActions);
+
+        $allowedActions = array_filter($allowedActions, function ($action) use ($id) {
+            return $action::checkRights($id, $this->performerId, $this->clientId);
+        });
+
+        // return array($statusActions, $roleActions);
+
+        return array_values($allowedActions);
     }
 
 
@@ -47,7 +61,7 @@ class Task
      * 
      * @return string[]
      */
-    public function getStatusesMap(): array
+    public function getStatusMap(): array
     {
         return [
             self::STATUS_NEW => 'Новое',
@@ -63,51 +77,31 @@ class Task
      * 
      * @return string[]
      */
-    // public function getActionsMap(): array
-    // {
-    //     return [
-    //         self::ACTION_CANCEL => 'Отменить',
-    //         self::ACTION_RESPONSE => 'Откликнуться',
-    //         self::ACTION_COMPLETE => 'Выполнено',
-    //         self::ACTION_DENY => 'Отказаться',
-    //     ];
-    // }
     public function getActionsMap(): array
     {
         return [
-            $this->cancelAction->getName(),
-            $this->completeAction->getName(),
-            $this->responseAction->getName(),
-            $this->denyAction->getName(),
+            CancelAction::getLabel(),
+            CompleteAction::getLabel(),
+            ResponseAction::getLabel(),
+            DenyAction::getLabel(),
         ];
     }
 
     /**
      * Возвращает статус задачи после совершения действия
      * 
-     * @param string $action
+     * @param AbstractAction $action
      * @return string|null
      */
-    // public function getNextStatus(string $action): ?string
-    // {
-    //     $map = [
-    //         self::ACTION_COMPLETE => self::STATUS_COMPLETE,
-    //         self::ACTION_CANCEL => self::STATUS_CANCEL,
-    //         self::ACTION_DENY => self::STATUS_CANCEL,
-    //     ];
-
-    //     return $map[$action] ?? null;
-    // }
-
-    public function getNextStatus(string $action): ?string
+    public function getNextStatus(AbstractAction $action): ?string
     {
         $map = [
             CompleteAction::class => self::STATUS_COMPLETE,
-            $this->cancelAction->getName() => self::STATUS_CANCEL,
-            $this->denyAction->getName() => self::STATUS_CANCEL,
+            CancelAction::class => self::STATUS_CANCEL,
+            DenyAction::class => self::STATUS_CANCEL,
         ];
 
-        return $map[$action] ?? null;
+        return $map[get_class($action)] ?? null;
     }
 
     /**
@@ -131,6 +125,22 @@ class Task
         }
     }
 
+/**
+     * Возвращает список возможных дейтсивй для указанного статуса
+     * 
+     * @param string $role
+     * @return array
+     */
+    public function roleAllowedActions(string $role): array
+    {
+        $map = [
+            self::ROLE_CLIENT => [CompleteAction::class, CancelAction::class],
+            self::ROLE_PERFORMER => [DenyAction::class, ResponseAction::class],
+        ];
+
+        return $map[$role] ?? [];
+    }
+
     /**
      * Возвращает список возможных дейтсивй для указанного статуса
      * 
@@ -140,8 +150,8 @@ class Task
     public function statusAllowedActions(string $status): array
     {
         $map = [
-            self::STATUS_IN_PROGRESS => [$this->completeAction, $this->denyAction],
-            self::STATUS_NEW => [$this->cancelAction, $this->responseAction],
+            self::STATUS_IN_PROGRESS => [CompleteAction::class, DenyAction::class],
+            self::STATUS_NEW => [CancelAction::class, ResponseAction::class],
         ];
 
         return $map[$status] ?? [];

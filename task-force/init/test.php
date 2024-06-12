@@ -1,28 +1,25 @@
 <?php
 require_once "vendor/autoload.php";
+ini_set('assert.exception', 1);
 
-use Taskforce\logic\actions\CancelAction;
-use Taskforce\logic\actions\CompleteAction;
-use Taskforce\logic\actions\DenyAction;
 use Taskforce\logic\actions\ResponseAction;
 use Taskforce\logic\Task;
 
 
-$task = new Task(
-    Task::STATUS_NEW, 
-    1, 
-    new CancelAction(),
-    new CompleteAction(),
-    new DenyAction(),
-    new ResponseAction(),
-    null
-);
-// $result = $task->getStatusesMap();
-// $result = $task->getActionsMap();
-// $result = $task->getNextStatus('act_cancel');
-$result = $task->statusAllowedActions(Task::STATUS_NEW);
+try {
+    $task = new Task(
+        Task::STATUS_NEW, 
+        3, // client
+        1 // performer
+    );
+    
+    $nextStatus = $task->getNextStatus(new ResponseAction());
+} catch (StatusActionException $e) {
+    die($e->getMessage());
+}
 
-// assert($task->getNextStatus('act_complete') == Task::STATUS_CANCEL, 'cancel action');
+var_dump('new -> performer,alien', $task->getAvailableActions(Task::ROLE_PERFORMER, 2));
+var_dump('new -> performer,same', $task->getAvailableActions(Task::ROLE_PERFORMER, 1));
 
-
-print_r($result);
+var_dump('new -> client,alien', $task->getAvailableActions(Task::ROLE_CLIENT, 2));
+var_dump('new -> client,same', $task->getAvailableActions(Task::ROLE_CLIENT, 3));
