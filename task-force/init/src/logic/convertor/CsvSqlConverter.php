@@ -66,10 +66,10 @@ class CsvSqlConverter
             });
 
             $sql .= "( " . implode(", ", $row) . "), ";
-
-            $sql = substr($sql, 0, -2);
-            return $sql;
         }
+
+        $sql = substr($sql, 0, -2);
+        return $sql;
     }
 
     protected function saveSqlContent(string $tableName, string $directory, string $content): string {
