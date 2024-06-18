@@ -45,14 +45,20 @@ class CsvSqlConverter
         $columns = $fileObject->fgetcsv();
         $values = [];
 
-        while(!$fileObject->eof()) {
-            $values[] = $fileObject->fgetcsv();
+        foreach ($this->getNextLine($fileObject) as $row) {
+            $values[] = $row;
         }
 
         $tableName = $file->getBasename('.csv');
         $sqlContent = $this->getSqlContent($tableName, $columns, $values);
 
         return $this->saveSqlContent($tableName, $outputDirectory, $sqlContent);
+    }
+
+    protected function getNextLine($fileObject) {
+        while (!$fileObject->eof()) {
+            yield $fileObject->fgetcsv();
+        }
     }
 
     protected function getSqlContent(string $tableName, array $columns, array $values): string {
