@@ -35,7 +35,8 @@ $csvFilePath = 'data/cities.csv';
 $tableName = 'taskforce';
 
 $converter = new ImportCsv($csvFilePath, $tableName);
-$sql = $converter->convert();
-file_put_contents('output.sql', $sql);
+$converter->convert();
+print_r($converter->getData());
+// file_put_contents('output.sql', $sql);
 
-echo "CSV file converted to SQL successfully!";
+// echo "CSV file converted to SQL successfully!";

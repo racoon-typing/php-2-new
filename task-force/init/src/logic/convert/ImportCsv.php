@@ -40,10 +40,10 @@ class ImportCsv
         $values = [];
         
         foreach($this->getNextLine() as $line) {
-            $values[] = implode(", ", $line);
+            $values[] = "(" . implode(", ", $line) . ")";
         }
 
-        $this->result = $sql . $values;
+        $this->result = $sql . implode(",\n", $values) . ";";
     }
 
     public function getData():string {
