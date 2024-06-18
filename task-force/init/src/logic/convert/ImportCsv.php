@@ -40,7 +40,10 @@ class ImportCsv
         $values = [];
         
         foreach($this->getNextLine() as $line) {
-            $values[] = "(" . implode(", ", $line) . ")";
+            $quotedValues = array_map(function($value) {
+                return "'" . addslashes($value) . "'";
+            }, $line);
+            $values[] = "(" . implode(", ", $quotedValues) . ")";
         }
 
         $this->result = $sql . implode(",\n", $values) . ";";

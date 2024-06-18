@@ -31,8 +31,10 @@ use Taskforce\logic\convert\ImportCsv;
 
 
 // Импортирует csv файл
-$csvFilePath = 'data/cities.csv';
-$tableName = 'taskforce';
+// $csvFilePath = 'data/cities.csv';
+// $tableName = 'cities';
+$csvFilePath = 'data/categories.csv';
+$tableName = 'categories';
 
 $converter = new ImportCsv($csvFilePath, $tableName);
 $converter->convert();
