@@ -2,7 +2,7 @@
 
 namespace Taskforce\logic;
 
-use Taskforce\exceptions\StatusException;
+use Taskforce\exceptions\TaskException;
 use Taskforce\logic\actions\AbstractAction;
 use Taskforce\logic\actions\CancelAction;
 use Taskforce\logic\actions\CompleteAction;
@@ -124,7 +124,7 @@ class Task
         ];
 
         if (!in_array($status, $availableStatuses)) {
-            throw new StatusException("Неизвестный статус: $status");
+            throw new TaskException("Неизвестный статус: $status");
         }
 
         if (in_array($status, $availableStatuses)) {
@@ -136,7 +136,7 @@ class Task
         $availableRoles = [self::ROLE_PERFORMER, self::ROLE_CLIENT];
 
         if (!in_array($role, $availableRoles)) {
-            throw new StatusException("Неизвестная роль: $role");
+            throw new TaskException("Неизвестная роль: $role");
         }
     }
 

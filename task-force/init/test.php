@@ -2,10 +2,12 @@
 require_once "vendor/autoload.php";
 ini_set('assert.exception', 1);
 
-// use Taskforce\exceptions\StatusException;
+// use Taskforce\exceptions\TaskException;
 // use Taskforce\logic\actions\ResponseAction;
 // use Taskforce\logic\Task;
-use Taskforce\logic\convert\ImportCsv;
+
+use Taskforce\exceptions\ConverterException;
+use Taskforce\logic\convertor\CsvSqlConverter;
 
 
 // try {
@@ -14,11 +16,11 @@ use Taskforce\logic\convert\ImportCsv;
 //         3, // client
 //         1 // performer
 //     );
-    
+
 //     $nextStatus = $task->getNextStatus(new ResponseAction());
 // } catch (\Exception $e) {
 //     die($e->getMessage());
-// } catch (StatusException $e) {
+// } catch (TaskException $e) {
 //     die($e->getMessage());
 // } 
 
@@ -31,14 +33,24 @@ use Taskforce\logic\convert\ImportCsv;
 
 
 // Импортирует csv файл
+try {
+    $converter = new CsvSqlConverter('data/csv');
+    $result = $converter->convertFiles('data/sql');
+
+    var_dump($result);
+} catch (ConverterException $err) {
+    die($err->getMessage());
+}
+
+
 // $csvFilePath = 'data/cities.csv';
 // $tableName = 'cities';
-$csvFilePath = 'data/categories.csv';
-$tableName = 'categories';
+// $csvFilePath = 'data/categories.csv';
+// $tableName = 'categories';
 
-$converter = new ImportCsv($csvFilePath, $tableName);
-$converter->convert();
-print_r($converter->getData());
+// $converter = new CsvSqlConverter($csvFilePath, $tableName);
+// $converter->convert();
+// print_r($converter->getData());
 // file_put_contents('output.sql', $sql);
 
 // echo "CSV file converted to SQL successfully!";
